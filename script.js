@@ -145,7 +145,7 @@ const allSections = document.querySelectorAll('.section');
 
 const revealSection = function (entries, observer) {
   const [entry] = entries;
-  console.log(entry);
+  // console.log(entry);
   if (!entry.isIntersecting) return; // outro guard clause
   entry.target.classList.remove('section--hidden');
   observer.unobserve(entry.target);
@@ -160,3 +160,26 @@ allSections.forEach(function (section) {
   sectionObserver.observe(section);
   section.classList.add('section--hidden');
 });
+
+const loadImg = function (entries, observer) {
+  const [entry] = entries;
+  // console.log(entry);
+  if (!entry.isIntersecting) return;
+  entry.target.src = entry.target.dataset.src; // substitui "src" por "data-src"
+  // entry.target.classList.remove('lazy-img');
+  entry.target.addEventListener('load', function () {
+    entry.target.classList.remove('lazy-img'); // remove o efeito blur assim que carrega 100%
+  });
+  observer.unobserve(entry.target);
+};
+
+const imgTargets = document.querySelectorAll('img[data-src]');
+console.log(imgTargets);
+
+const imgObserver = new IntersectionObserver(loadImg, {
+  root: null,
+  threshold: 0,
+  rootMargin: '200px' // faz as imagens carregarem mais rápido
+});
+
+imgTargets.forEach((img) => imgObserver.observe(img));
